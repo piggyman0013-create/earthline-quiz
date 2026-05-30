@@ -441,16 +441,19 @@ const S = {
 // ══ API — Vercel proxy (no CORS) ══
 async function get(params) {
   const r = await fetch('/api/quiz?' + new URLSearchParams(params));
+  if (!r.ok) throw new Error('HTTP ' + r.status);
   const j = await r.json();
   if (!j.ok) throw new Error(j.error);
   return j.data;
 }
 async function post(body) {
+  // Always use real POST so large payloads (saveResult) don't hit URL length limits
   const r = await fetch('/api/quiz', {
     method: 'POST',
-    headers: {'Content-Type':'application/json'},
+    headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(body)
   });
+  if (!r.ok) throw new Error('HTTP ' + r.status);
   const j = await r.json();
   if (!j.ok) throw new Error(j.error);
   return j.data;
