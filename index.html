@@ -213,7 +213,7 @@ button{cursor:pointer;font-family:var(--sans)}input,select,textarea{font-family:
   <div class="nav-tab active" data-tab="home" onclick="tab('home')">📋 ผลิตภัณฑ์</div>
   <div class="nav-tab hidden" id="tabManage" data-tab="manage" onclick="tab('manage')">📚 จัดการคำถาม</div>
   <div class="nav-tab" data-tab="history" onclick="tab('history')">🗂 ประวัติผลสอบ</div>
-  <div class="nav-tab" data-tab="settings" onclick="tab('settings')">⚙️ ตั้งค่า</div>
+  <div class="nav-tab hidden" id="tabSettings" data-tab="settings" onclick="tab('settings')">⚙️ ตั้งค่า</div>
 </div>
 
 <div id="toast"></div>
@@ -887,6 +887,7 @@ async function checkPin() {
 function setAdmin(on) {
   document.getElementById('btnAddProd').style.display=on?'':'none';
   document.getElementById('tabManage').classList.toggle('hidden',!on);
+  document.getElementById('tabSettings').classList.toggle('hidden',!on);
   document.getElementById('hdrRight').innerHTML=on
     ?`<span class="badge-admin">ADMIN</span> <button class="btn-admin-hdr" onclick="logout()">ออก</button>`
     :`<button class="btn-admin-hdr" onclick="showPin()">🔐 Admin</button>`;
@@ -929,6 +930,7 @@ S.isAdmin = false;
 localStorage.removeItem('el_admin');
 // Reset UI to non-admin state
 document.getElementById('tabManage').classList.add('hidden');
+document.getElementById('tabSettings').classList.add('hidden');
 document.getElementById('btnAddProd').style.display = 'none';
 document.getElementById('hdrRight').innerHTML = '<button class="btn-admin-hdr" onclick="showPin()">🔐 Admin</button>';
 
