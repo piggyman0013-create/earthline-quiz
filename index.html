@@ -1,0 +1,915 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Earthline · Sales Training Quiz</title>
+<link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --navy:#0c2340;--navy2:#1a3a5c;--navy3:#234e78;
+  --sky:#3b9eff;--sky2:#1a7fd4;--sky-lt:#e8f3ff;--sky-xs:#f0f7ff;
+  --teal:#00c9b1;--teal-lt:#e0faf6;
+  --green:#11c98a;--green-lt:#dcfbee;
+  --red:#f04e4e;--red-lt:#fff0f0;
+  --amber:#f5a623;--amber-lt:#fff8e6;
+  --bg:#f2f5f9;--surf:#ffffff;--surf2:#f8fafc;
+  --bdr:#dde4ed;--bdr2:#c8d4e3;
+  --txt:#0c2340;--txt2:#3d5a7a;--txt3:#7a96b2;
+  --mono:'IBM Plex Mono',monospace;--sans:'Sarabun',sans-serif;
+  --r:10px;--r2:16px;
+  --sh:0 2px 12px rgba(12,35,64,.08);--sh2:0 8px 32px rgba(12,35,64,.14);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{font-size:15px}body{font-family:var(--sans);background:var(--bg);color:var(--txt);min-height:100vh;line-height:1.6}
+button{cursor:pointer;font-family:var(--sans)}input,select,textarea{font-family:var(--sans)}
+
+.hdr{background:linear-gradient(135deg,var(--navy),var(--navy2));height:60px;padding:0 28px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;box-shadow:0 2px 16px rgba(0,0,0,.25)}
+.hdr-brand{display:flex;align-items:center;gap:10px;color:#fff}
+.hdr-dot{width:9px;height:9px;border-radius:50%;background:var(--teal);box-shadow:0 0 0 3px rgba(0,201,177,.25);animation:pulse 2.5s infinite}
+@keyframes pulse{0%,100%{box-shadow:0 0 0 3px rgba(0,201,177,.25)}50%{box-shadow:0 0 0 7px rgba(0,201,177,.08)}}
+.hdr-title{font-size:15px;font-weight:600;letter-spacing:.02em}
+.hdr-right{display:flex;align-items:center;gap:8px}
+.btn-admin-hdr{font-size:12px;font-family:var(--mono);padding:5px 14px;border-radius:6px;border:1px solid rgba(255,255,255,.25);background:rgba(255,255,255,.08);color:#fff;transition:background .15s}
+.btn-admin-hdr:hover{background:rgba(255,255,255,.18)}
+.badge-admin{font-size:11px;font-family:var(--mono);font-weight:600;padding:3px 10px;border-radius:5px;background:var(--teal);color:var(--navy)}
+
+.nav{background:var(--navy2);display:flex;padding:0 24px;border-bottom:1px solid rgba(255,255,255,.06);overflow-x:auto}
+.nav::-webkit-scrollbar{display:none}
+.nav-tab{font-size:13px;font-weight:500;padding:12px 18px;color:rgba(255,255,255,.45);border-bottom:2px solid transparent;transition:color .15s,border-color .15s;white-space:nowrap;user-select:none;display:flex;align-items:center;gap:6px}
+.nav-tab:hover{color:rgba(255,255,255,.8)}
+.nav-tab.active{color:#fff;border-bottom-color:var(--teal)}
+.nav-tab.hidden{display:none!important}
+
+.page{max-width:960px;margin:0 auto;padding:32px 20px}
+.card{background:var(--surf);border-radius:var(--r2);border:1px solid var(--bdr);box-shadow:var(--sh);padding:24px;margin-bottom:16px}
+
+.sec-hd{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;margin-bottom:24px;flex-wrap:wrap}
+.sec-title{font-size:20px;font-weight:700;color:var(--navy)}
+.sec-sub{font-size:13px;color:var(--txt3);margin-top:2px}
+
+.prod-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:16px}
+.prod-card{background:var(--surf);border-radius:var(--r2);border:1.5px solid var(--bdr);padding:20px 22px 18px;cursor:pointer;position:relative;overflow:hidden;transition:transform .18s,box-shadow .18s,border-color .18s;display:flex;flex-direction:column;gap:6px}
+.prod-card:hover{transform:translateY(-3px);box-shadow:0 12px 32px rgba(12,35,64,.15);border-color:var(--sky)}
+.prod-accent{position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--sky),var(--teal));transform:scaleX(0);transform-origin:left;transition:transform .2s}
+.prod-card:hover .prod-accent{transform:scaleX(1)}
+.prod-icon{width:40px;height:40px;border-radius:10px;background:var(--sky-xs);display:flex;align-items:center;justify-content:center;font-size:20px;margin-bottom:4px}
+.prod-name{font-size:14px;font-weight:700;color:var(--navy)}
+.prod-desc{font-size:12px;color:var(--txt3)}
+.prod-count{margin-top:6px;font-size:11px;font-family:var(--mono);font-weight:500;color:var(--sky2);display:flex;align-items:center;gap:4px}
+.prod-count::before{content:'';width:6px;height:6px;border-radius:50%;background:var(--sky);display:inline-block}
+.prod-actions{position:absolute;top:14px;right:14px;display:flex;gap:4px;opacity:0;transition:opacity .15s}
+.prod-card:hover .prod-actions{opacity:1}
+.btn-ic{width:28px;height:28px;border-radius:6px;border:1px solid var(--bdr);background:var(--surf);display:flex;align-items:center;justify-content:center;font-size:12px;color:var(--txt3);transition:background .12s,color .12s}
+.btn-ic:hover{background:var(--sky-lt);color:var(--sky2)}
+.btn-ic.danger:hover{background:var(--red-lt);color:var(--red)}
+
+.btn{display:inline-flex;align-items:center;gap:7px;padding:9px 20px;border-radius:8px;font-size:13px;font-weight:600;border:none;transition:all .15s;white-space:nowrap}
+.btn:active{transform:scale(.97)}
+.btn-primary{background:var(--navy2);color:#fff}.btn-primary:hover{background:var(--navy3)}
+.btn-sky{background:linear-gradient(135deg,var(--sky),var(--sky2));color:#fff;box-shadow:0 4px 14px rgba(59,158,255,.35)}
+.btn-sky:hover{box-shadow:0 6px 20px rgba(59,158,255,.5);transform:translateY(-1px)}
+.btn-teal{background:linear-gradient(135deg,var(--teal),#00a896);color:#fff;box-shadow:0 4px 14px rgba(0,201,177,.3)}
+.btn-teal:hover{box-shadow:0 6px 20px rgba(0,201,177,.45);transform:translateY(-1px)}
+.btn-ghost{background:transparent;color:var(--txt2);border:1.5px solid var(--bdr)}.btn-ghost:hover{background:var(--sky-lt);border-color:var(--sky);color:var(--sky2)}
+.btn-danger{background:var(--red);color:#fff}
+.btn-sm{padding:6px 14px;font-size:12px;border-radius:6px}
+
+.q-list{display:flex;flex-direction:column;gap:8px}
+.q-row{display:flex;align-items:flex-start;gap:12px;padding:14px 18px;background:var(--surf);border:1.5px solid var(--bdr);border-radius:var(--r);transition:border-color .12s}
+.q-row:hover{border-color:var(--sky)}
+.q-num{font-family:var(--mono);font-size:11px;font-weight:500;padding:3px 8px;background:var(--sky-xs);color:var(--sky2);border-radius:5px;flex-shrink:0;margin-top:1px}
+.q-text{font-size:13px;flex:1;line-height:1.55}
+.q-ans{font-family:var(--mono);font-size:12px;font-weight:700;color:var(--green);flex-shrink:0;margin-top:2px;background:var(--green-lt);padding:2px 8px;border-radius:5px}
+.q-actions{display:flex;gap:6px;flex-shrink:0;margin-top:1px}
+
+.form-group{margin-bottom:18px}
+.form-label{display:block;font-size:11px;font-weight:700;color:var(--txt3);margin-bottom:7px;text-transform:uppercase;letter-spacing:.07em}
+.form-input,.form-select,.form-textarea{width:100%;padding:10px 13px;border:1.5px solid var(--bdr);border-radius:8px;font-size:14px;color:var(--txt);background:#fff;transition:border-color .12s,box-shadow .12s;outline:none}
+.form-input:focus,.form-select:focus,.form-textarea:focus{border-color:var(--sky);box-shadow:0 0 0 3px rgba(59,158,255,.12)}
+.form-textarea{resize:vertical;min-height:72px}
+.opts-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.opt-key{font-size:11px;font-family:var(--mono);font-weight:700;color:var(--navy2);margin-bottom:5px}
+
+/* import zone */
+.import-zone{border:2px dashed var(--bdr2);border-radius:var(--r2);padding:32px;text-align:center;cursor:pointer;transition:border-color .15s,background .15s;margin-bottom:16px}
+.import-zone:hover,.import-zone.drag{border-color:var(--sky);background:var(--sky-xs)}
+.import-zone-icon{font-size:36px;margin-bottom:10px}
+.import-zone-text{font-size:14px;color:var(--txt2);font-weight:500}
+.import-zone-sub{font-size:12px;color:var(--txt3);margin-top:4px}
+.import-preview{background:var(--surf2);border:1px solid var(--bdr);border-radius:var(--r);padding:16px;margin-bottom:16px;max-height:300px;overflow-y:auto}
+.import-q-row{font-size:12px;padding:8px 0;border-bottom:1px solid var(--bdr);line-height:1.5}
+.import-q-row:last-child{border-bottom:none}
+.import-q-num{font-family:var(--mono);font-size:11px;color:var(--txt3);margin-right:8px}
+.import-q-ans{font-family:var(--mono);font-size:11px;font-weight:700;color:var(--green);margin-left:8px}
+
+.quiz-hdr{background:linear-gradient(135deg,var(--navy),var(--navy3));color:#fff;border-radius:var(--r2);padding:24px 28px;margin-bottom:20px;box-shadow:var(--sh2)}
+.quiz-prod-lbl{font-size:11px;color:rgba(255,255,255,.5);font-family:var(--mono);margin-bottom:4px}
+.quiz-sales{font-size:19px;font-weight:700}
+.prog-track{height:5px;background:rgba(255,255,255,.15);border-radius:3px;margin-top:18px;overflow:hidden}
+.prog-fill{height:100%;background:linear-gradient(90deg,var(--teal),var(--sky));border-radius:3px;transition:width .35s ease}
+.quiz-ctr{font-size:12px;color:rgba(255,255,255,.5);margin-top:8px;font-family:var(--mono)}
+
+.q-text-big{font-size:16px;font-weight:600;line-height:1.65;margin-bottom:22px;color:var(--navy)}
+.opts-list{display:flex;flex-direction:column;gap:10px}
+.opt-btn{width:100%;text-align:left;padding:14px 18px;border:2px solid var(--bdr);border-radius:var(--r);background:#fff;font-size:14px;display:flex;align-items:flex-start;gap:12px;line-height:1.5;transition:all .15s}
+.opt-btn:not(:disabled):hover{border-color:var(--sky);background:var(--sky-xs)}
+.opt-btn.correct{border-color:var(--green);background:var(--green-lt)}
+.opt-btn.wrong{border-color:var(--red);background:var(--red-lt)}
+.opt-btn:disabled{cursor:default}
+.opt-k{font-family:var(--mono);font-weight:700;font-size:13px;color:#fff;background:var(--navy2);width:26px;height:26px;border-radius:6px;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px}
+.opt-btn.correct .opt-k{background:var(--green)}
+.opt-btn.wrong .opt-k{background:var(--red)}
+.expl-box{margin-top:18px;padding:14px 18px;background:linear-gradient(135deg,var(--sky-xs),var(--teal-lt));border-left:3px solid var(--sky);border-radius:0 8px 8px 0;font-size:13px;color:var(--navy2);line-height:1.65}
+.next-wrap{margin-top:22px;display:flex;justify-content:flex-end}
+
+.prequiz-wrap{max-width:500px;margin:48px auto}
+.prequiz-hero{text-align:center;margin-bottom:32px;padding:32px;background:linear-gradient(135deg,var(--navy),var(--navy3));border-radius:var(--r2);color:#fff;box-shadow:var(--sh2)}
+.prequiz-emoji{font-size:48px;margin-bottom:12px}
+.prequiz-prod{font-size:22px;font-weight:700}
+.prequiz-sub{font-size:13px;color:rgba(255,255,255,.55);margin-top:4px}
+.prequiz-stats{display:flex;justify-content:center;gap:24px;margin-top:20px}
+.prequiz-stat{text-align:center}
+.prequiz-stat-n{font-size:28px;font-weight:700;font-family:var(--mono)}
+.prequiz-stat-l{font-size:11px;color:rgba(255,255,255,.5)}
+
+.result-hero{background:linear-gradient(135deg,var(--navy),var(--navy3));color:#fff;border-radius:var(--r2);padding:36px 28px;text-align:center;margin-bottom:20px;box-shadow:var(--sh2)}
+.result-score{font-size:72px;font-weight:300;font-family:var(--mono);line-height:1}
+.result-verdict{font-size:22px;font-weight:700;margin-top:14px}
+.score-track{height:8px;background:rgba(255,255,255,.15);border-radius:4px;margin:20px auto;max-width:280px;overflow:hidden}
+.score-fill{height:100%;border-radius:4px;transition:width 1.2s cubic-bezier(.22,1,.36,1)}
+.result-meta{font-size:13px;color:rgba(255,255,255,.5);margin-top:10px}
+.rdr{display:flex;align-items:flex-start;gap:12px;padding:13px 0;border-bottom:1px solid var(--bdr);font-size:13px}
+.rdr:last-child{border-bottom:none}
+.rdr-num{font-family:var(--mono);font-size:11px;color:var(--txt3);width:28px;flex-shrink:0;margin-top:2px}
+.rdr-q{flex:1;line-height:1.55}
+.rdr-q small{color:var(--txt3)}
+.badge{font-size:11px;font-family:var(--mono);font-weight:700;padding:3px 9px;border-radius:5px;flex-shrink:0;margin-top:2px}
+.badge-ok{background:var(--green-lt);color:var(--green)}
+.badge-ng{background:var(--red-lt);color:var(--red)}
+
+.hist-table{width:100%;border-collapse:collapse}
+.hist-table th{font-size:11px;font-family:var(--mono);font-weight:600;color:var(--txt3);padding:10px 14px;text-align:left;border-bottom:2px solid var(--bdr)}
+.hist-table td{padding:12px 14px;font-size:13px;border-bottom:1px solid var(--bdr);vertical-align:middle}
+.hist-table tr:last-child td{border-bottom:none}
+.hist-table tr:hover td{background:var(--sky-xs)}
+.tag-pass{font-size:11px;font-family:var(--mono);font-weight:700;padding:3px 9px;border-radius:5px;background:var(--green-lt);color:var(--green)}
+.tag-fail{font-size:11px;font-family:var(--mono);font-weight:700;padding:3px 9px;border-radius:5px;background:var(--red-lt);color:var(--red)}
+.chip{font-size:11px;font-family:var(--mono);padding:2px 8px;border-radius:5px;background:var(--sky-lt);color:var(--sky2);font-weight:600}
+
+.setup-step{display:flex;gap:16px;padding:14px 0;border-bottom:1px solid var(--bdr)}
+.setup-step:last-child{border-bottom:none}
+.step-num{width:28px;height:28px;border-radius:50%;background:var(--navy2);color:#fff;font-family:var(--mono);font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px}
+.step-content{font-size:13px;line-height:1.65;color:var(--txt2)}
+.step-content strong{color:var(--navy);font-weight:700}
+.step-content code{font-family:var(--mono);font-size:12px;background:var(--bg);padding:2px 6px;border-radius:4px;color:var(--navy2)}
+
+.overlay{position:fixed;inset:0;background:rgba(12,35,64,.55);display:flex;align-items:center;justify-content:center;z-index:200;padding:20px;backdrop-filter:blur(4px)}
+.modal{background:#fff;border-radius:var(--r2);width:100%;max-width:580px;max-height:92vh;overflow-y:auto;padding:28px;box-shadow:0 24px 64px rgba(0,0,0,.3);animation:popIn .2s ease}
+@keyframes popIn{from{opacity:0;transform:scale(.95)}to{opacity:1;transform:scale(1)}}
+.modal-hd{display:flex;justify-content:space-between;align-items:center;margin-bottom:22px}
+.modal-title{font-size:16px;font-weight:700;color:var(--navy)}
+.modal-close{background:none;border:none;font-size:22px;color:var(--txt3);line-height:1}
+.modal-close:hover{color:var(--txt)}
+.modal-ft{display:flex;justify-content:flex-end;gap:10px;margin-top:24px;padding-top:18px;border-top:1px solid var(--bdr)}
+
+.cheat-overlay{position:fixed;inset:0;z-index:500;background:rgba(12,35,64,.92);display:flex;align-items:center;justify-content:center;backdrop-filter:blur(6px)}
+.cheat-box{background:#fff;border-radius:20px;padding:40px 36px;text-align:center;max-width:380px;width:90%;box-shadow:0 32px 80px rgba(0,0,0,.4)}
+.cheat-icon{font-size:56px;margin-bottom:16px}
+.cheat-title{font-size:20px;font-weight:700;color:var(--navy);margin-bottom:8px}
+.cheat-msg{font-size:14px;color:var(--txt2);line-height:1.65;margin-bottom:8px}
+.cheat-count{font-size:13px;font-family:var(--mono);font-weight:600;color:var(--amber);background:var(--amber-lt);padding:6px 14px;border-radius:6px;display:inline-block;margin-bottom:24px}
+
+#toast{position:fixed;bottom:24px;right:24px;z-index:300;display:flex;flex-direction:column;gap:8px;pointer-events:none}
+.toast-item{padding:11px 18px;border-radius:8px;font-size:13px;color:#fff;box-shadow:0 6px 20px rgba(0,0,0,.2);animation:slideUp .25s ease;display:flex;align-items:center;gap:8px}
+@keyframes slideUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+.toast-success{background:linear-gradient(135deg,#0eb87f,#10c987)}
+.toast-error{background:linear-gradient(135deg,#e84040,#f06060)}
+.toast-info{background:linear-gradient(135deg,var(--navy2),var(--navy3))}
+
+.empty{text-align:center;padding:56px 24px;color:var(--txt3);font-size:14px;line-height:2}
+.loader{display:flex;align-items:center;justify-content:center;height:200px;color:var(--txt3);gap:10px;font-size:14px}
+.spin{width:22px;height:22px;border:2.5px solid var(--bdr2);border-top-color:var(--sky);border-radius:50%;animation:spin .7s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.flex{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.ml-a{margin-left:auto}
+
+@media(max-width:600px){.prod-grid{grid-template-columns:1fr}.opts-grid{grid-template-columns:1fr}.hist-table th:nth-child(n+4),.hist-table td:nth-child(n+4){display:none}}
+</style>
+</head>
+<body>
+
+<div class="hdr">
+  <div class="hdr-brand">
+    <div class="hdr-dot"></div>
+    <div class="hdr-title">EARTHLINE · Sales Training Quiz</div>
+  </div>
+  <div class="hdr-right" id="hdrRight">
+    <button class="btn-admin-hdr" onclick="showPin()">🔐 Admin</button>
+  </div>
+</div>
+
+<div class="nav">
+  <div class="nav-tab active" data-tab="home" onclick="tab('home')">📋 ผลิตภัณฑ์</div>
+  <div class="nav-tab hidden" id="tabManage" data-tab="manage" onclick="tab('manage')">📚 จัดการคำถาม</div>
+  <div class="nav-tab" data-tab="history" onclick="tab('history')">🗂 ประวัติผลสอบ</div>
+  <div class="nav-tab" data-tab="settings" onclick="tab('settings')">⚙️ ตั้งค่า</div>
+</div>
+
+<div id="toast"></div>
+
+<!-- HOME -->
+<div id="pg-home" class="page">
+  <div class="sec-hd">
+    <div><div class="sec-title">เลือกผลิตภัณฑ์</div><div class="sec-sub">กดการ์ดเพื่อดูคำถามและเริ่มทดสอบ</div></div>
+    <div class="flex">
+      <button class="btn btn-sky btn-sm" id="btnAddProd" style="display:none" onclick="showProdForm()">+ ผลิตภัณฑ์</button>
+      <button class="btn btn-ghost btn-sm" onclick="loadHome()">↻</button>
+    </div>
+  </div>
+  <div id="prodGrid" class="prod-grid"><div class="loader"><div class="spin"></div> กำลังโหลด...</div></div>
+</div>
+
+<!-- MANAGE -->
+<div id="pg-manage" class="page" style="display:none">
+  <div class="sec-hd">
+    <div>
+      <div style="font-size:11px;color:var(--txt3);font-family:var(--mono);margin-bottom:4px" id="mgLbl">–</div>
+      <div class="sec-title" id="mgTitle">จัดการคำถาม</div>
+    </div>
+    <div class="flex">
+      <button class="btn btn-ghost btn-sm" onclick="tab('home')">← กลับ</button>
+      <button class="btn btn-ghost btn-sm" onclick="showImport()">📂 Import Word</button>
+      <button class="btn btn-teal btn-sm" onclick="startPreQuiz()">▶ ทดสอบ</button>
+      <button class="btn btn-sky btn-sm" onclick="showQForm()">+ คำถาม</button>
+    </div>
+  </div>
+  <div id="qList" class="q-list"></div>
+</div>
+
+<!-- PRE-QUIZ -->
+<div id="pg-prequiz" class="page" style="display:none">
+  <div class="prequiz-wrap">
+    <div class="prequiz-hero">
+      <div class="prequiz-emoji">📝</div>
+      <div class="prequiz-prod" id="pqProd">–</div>
+      <div class="prequiz-sub" id="pqDesc">–</div>
+      <div class="prequiz-stats">
+        <div class="prequiz-stat"><div class="prequiz-stat-n" id="pqCount">0</div><div class="prequiz-stat-l">คำถาม</div></div>
+        <div class="prequiz-stat"><div class="prequiz-stat-n">80%</div><div class="prequiz-stat-l">เกณฑ์ผ่าน</div></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="form-group">
+        <label class="form-label">ชื่อพนักงานขาย</label>
+        <input class="form-input" id="salesName" placeholder="กรอกชื่อ-นามสกุล" autocomplete="off" onkeydown="if(event.key==='Enter')startQuiz()">
+      </div>
+      <div class="flex" style="justify-content:space-between">
+        <button class="btn btn-ghost" onclick="tab('manage')">← กลับ</button>
+        <button class="btn btn-sky" onclick="startQuiz()">เริ่มทดสอบ →</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- QUIZ -->
+<div id="pg-quiz" class="page" style="display:none">
+  <div class="quiz-hdr">
+    <div class="quiz-prod-lbl" id="qzProd">–</div>
+    <div class="quiz-sales" id="qzSales">–</div>
+    <div class="prog-track"><div class="prog-fill" id="progFill" style="width:0%"></div></div>
+    <div class="quiz-ctr" id="qzCtr">0 / 0</div>
+  </div>
+  <div class="card">
+    <div class="q-text-big" id="qzText">–</div>
+    <div class="opts-list" id="qzOpts"></div>
+    <div class="expl-box" id="qzExpl" style="display:none"></div>
+    <div class="next-wrap"><button class="btn btn-sky" id="qzNext" style="display:none" onclick="nextQ()">ข้อถัดไป →</button></div>
+  </div>
+</div>
+
+<!-- RESULT -->
+<div id="pg-result" class="page" style="display:none">
+  <div class="result-hero">
+    <div class="result-score" id="rScore">–</div>
+    <div class="result-verdict" id="rVerdict">–</div>
+    <div class="score-track"><div class="score-fill" id="rFill" style="width:0%"></div></div>
+    <div class="result-meta" id="rMeta">–</div>
+  </div>
+  <div class="card">
+    <div style="font-weight:700;font-size:14px;margin-bottom:16px;color:var(--navy)">สรุปคำตอบ</div>
+    <div id="rDetail"></div>
+  </div>
+  <div class="flex" style="justify-content:center;margin-top:20px">
+    <button class="btn btn-ghost" onclick="tab('home')">🏠 หน้าหลัก</button>
+    <button class="btn btn-sky" onclick="retake()">🔄 ทำใหม่</button>
+  </div>
+</div>
+
+<!-- HISTORY -->
+<div id="pg-history" class="page" style="display:none">
+  <div class="sec-hd">
+    <div><div class="sec-title">ประวัติผลสอบ</div><div class="sec-sub">บันทึกผลการทดสอบทั้งหมด</div></div>
+    <div class="flex">
+      <select class="form-select" style="width:200px;font-size:12px" id="histFilter" onchange="loadHist()"><option value="">— ทั้งหมด —</option></select>
+      <button class="btn btn-ghost btn-sm" onclick="loadHist()">↻</button>
+    </div>
+  </div>
+  <div class="card" style="overflow-x:auto"><div id="histBody"><div class="loader"><div class="spin"></div></div></div></div>
+</div>
+
+<!-- SETTINGS -->
+<div id="pg-settings" class="page" style="display:none">
+  <div style="max-width:560px">
+    <div class="card">
+      <div style="font-weight:700;font-size:15px;color:var(--navy);margin-bottom:20px">🔗 API URL</div>
+      <div class="form-group">
+        <label class="form-label">Google Apps Script Web App URL</label>
+        <input class="form-input" id="apiInp" placeholder="https://script.google.com/macros/s/.../exec">
+      </div>
+      <div class="flex">
+        <button class="btn btn-primary" onclick="saveUrl()">💾 บันทึก</button>
+        <button class="btn btn-ghost btn-sm" onclick="testConn()">🔌 ทดสอบ</button>
+      </div>
+      <div style="margin-top:10px;font-size:12px;color:var(--txt3)" id="urlStatus"></div>
+    </div>
+    <div class="card">
+      <div style="font-weight:700;font-size:15px;color:var(--navy);margin-bottom:16px">📖 ขั้นตอน Deploy</div>
+      <div class="setup-step"><div class="step-num">1</div><div class="step-content">เปิด <strong>Google Sheet</strong> ใหม่ → <strong>Extensions → Apps Script</strong></div></div>
+      <div class="setup-step"><div class="step-num">2</div><div class="step-content">วางโค้ดจากไฟล์ <code>Code.gs</code> → Save</div></div>
+      <div class="setup-step"><div class="step-num">3</div><div class="step-content"><strong>Deploy → New Deployment</strong> → Web App → Execute as: <strong>Me</strong> → Access: <strong>Anyone</strong></div></div>
+      <div class="setup-step"><div class="step-num">4</div><div class="step-content">วาง URL ด้านบน → บันทึก → ทดสอบ</div></div>
+      <div class="setup-step"><div class="step-num">5</div><div class="step-content">กลับ Apps Script → เลือก function <code>seedCeegQuestions</code> → <strong>▶ Run</strong> (ครั้งเดียว)</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- MODALS -->
+<div class="overlay" id="pinOv" style="display:none" onclick="if(event.target===this)hidePin()">
+  <div class="modal" style="max-width:340px">
+    <div class="modal-hd"><div class="modal-title">🔐 Admin PIN</div><button class="modal-close" onclick="hidePin()">✕</button></div>
+    <div class="form-group">
+      <input class="form-input" id="pinInp" type="password" maxlength="12" placeholder="••••••" style="font-size:20px;letter-spacing:.2em;text-align:center" onkeydown="if(event.key==='Enter')checkPin()">
+    </div>
+    <div id="pinErr" style="color:var(--red);font-size:12px;display:none;margin-bottom:8px">PIN ไม่ถูกต้อง</div>
+    <div class="modal-ft">
+      <button class="btn btn-ghost" onclick="hidePin()">ยกเลิก</button>
+      <button class="btn btn-primary" onclick="checkPin()">เข้าสู่ระบบ</button>
+    </div>
+  </div>
+</div>
+
+<div class="overlay" id="qOv" style="display:none" onclick="if(event.target===this)hideQForm()">
+  <div class="modal">
+    <div class="modal-hd"><div class="modal-title" id="qFormTitle">เพิ่มคำถาม</div><button class="modal-close" onclick="hideQForm()">✕</button></div>
+    <input type="hidden" id="qId">
+    <div class="form-group"><label class="form-label">คำถาม *</label><textarea class="form-textarea" id="qQ" rows="3" placeholder="พิมพ์คำถาม..."></textarea></div>
+    <div class="opts-grid">
+      <div class="form-group"><div class="opt-key">A</div><input class="form-input" id="qA" placeholder="ตัวเลือก A"></div>
+      <div class="form-group"><div class="opt-key">B</div><input class="form-input" id="qB" placeholder="ตัวเลือก B"></div>
+      <div class="form-group"><div class="opt-key">C</div><input class="form-input" id="qC" placeholder="ตัวเลือก C"></div>
+      <div class="form-group"><div class="opt-key">D</div><input class="form-input" id="qD" placeholder="ตัวเลือก D"></div>
+    </div>
+    <div class="form-group"><label class="form-label">คำตอบที่ถูกต้อง *</label>
+      <select class="form-select" id="qAns"><option value="A">A</option><option value="B">B</option><option value="C">C</option><option value="D">D</option></select>
+    </div>
+    <div class="form-group"><label class="form-label">คำอธิบายเฉลย</label><textarea class="form-textarea" id="qExp" rows="2" placeholder="อธิบายเหตุผล..."></textarea></div>
+    <div class="modal-ft"><button class="btn btn-ghost" onclick="hideQForm()">ยกเลิก</button><button class="btn btn-primary" onclick="submitQ()">💾 บันทึก</button></div>
+  </div>
+</div>
+
+<div class="overlay" id="pOv" style="display:none" onclick="if(event.target===this)hideProdForm()">
+  <div class="modal" style="max-width:400px">
+    <div class="modal-hd"><div class="modal-title" id="pFormTitle">เพิ่มผลิตภัณฑ์</div><button class="modal-close" onclick="hideProdForm()">✕</button></div>
+    <input type="hidden" id="pId">
+    <div class="form-group"><label class="form-label">ชื่อผลิตภัณฑ์ *</label><input class="form-input" id="pName" placeholder="ชื่อผลิตภัณฑ์"></div>
+    <div class="form-group"><label class="form-label">คำอธิบาย</label><input class="form-input" id="pDesc" placeholder="รายละเอียดสั้นๆ"></div>
+    <div class="modal-ft"><button class="btn btn-ghost" onclick="hideProdForm()">ยกเลิก</button><button class="btn btn-primary" onclick="submitProd()">💾 บันทึก</button></div>
+  </div>
+</div>
+
+<!-- IMPORT MODAL -->
+<div class="overlay" id="importOv" style="display:none" onclick="if(event.target===this)hideImport()">
+  <div class="modal" style="max-width:640px">
+    <div class="modal-hd"><div class="modal-title">📂 Import คำถามจากไฟล์ Word</div><button class="modal-close" onclick="hideImport()">✕</button></div>
+    <div class="import-zone" id="dropZone" onclick="document.getElementById('fileInput').click()" ondragover="event.preventDefault();this.classList.add('drag')" ondragleave="this.classList.remove('drag')" ondrop="handleDrop(event)">
+      <div class="import-zone-icon">📄</div>
+      <div class="import-zone-text">คลิกหรือลากไฟล์ .docx มาวางที่นี่</div>
+      <div class="import-zone-sub">รองรับรูปแบบเดียวกับไฟล์ตัวอย่างที่มีอยู่</div>
+    </div>
+    <input type="file" id="fileInput" accept=".docx,.doc" style="display:none" onchange="handleFile(this.files[0])">
+    <div id="importPreview" style="display:none">
+      <div style="font-size:13px;font-weight:600;color:var(--navy);margin-bottom:10px">พบ <span id="importCount">0</span> ข้อ — ตรวจสอบก่อน Import</div>
+      <div class="import-preview" id="importList"></div>
+      <div class="form-group">
+        <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:13px">
+          <input type="checkbox" id="replaceCheck" checked style="width:16px;height:16px">
+          ลบคำถามเดิมของผลิตภัณฑ์นี้ออกก่อน (แทนที่ทั้งหมด)
+        </label>
+      </div>
+    </div>
+    <div id="importStatus" style="font-size:13px;color:var(--txt3);margin-bottom:12px"></div>
+    <div class="modal-ft">
+      <button class="btn btn-ghost" onclick="hideImport()">ยกเลิก</button>
+      <button class="btn btn-primary" id="btnDoImport" style="display:none" onclick="doImport()">⬆️ Import <span id="importBtnCount">0</span> ข้อ</button>
+    </div>
+  </div>
+</div>
+
+<!-- CHEAT WARNING -->
+<div class="cheat-overlay" id="cheatOv" style="display:none">
+  <div class="cheat-box">
+    <div class="cheat-icon">👀</div>
+    <div class="cheat-title">ออกจากหน้าสอบ!</div>
+    <div class="cheat-msg">ระบบตรวจพบว่าคุณออกจากหน้านี้ระหว่างทำแบบทดสอบ<br>การกระทำนี้จะถูกบันทึกในผลสอบ</div>
+    <div class="cheat-count" id="cheatTxt">ออกจากหน้าไปแล้ว 1 ครั้ง</div>
+    <button class="btn btn-sky" style="width:100%" onclick="document.getElementById('cheatOv').style.display='none'">กลับมาทำต่อ →</button>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js"></script>
+<script>
+// ══ CONFIG ══
+// ══ STATE ══
+const S = {
+  isAdmin: false,
+  products: [], questions: [], cur: null,
+  importedQs: [],
+  quiz: { sales:'', qs:[], idx:0, ans:[], done:false, cheatCount:0, optMap:{} }
+};
+
+// ══ API — Vercel proxy (no CORS) ══
+async function get(params) {
+  const r = await fetch('/api/quiz?' + new URLSearchParams(params));
+  const j = await r.json();
+  if (!j.ok) throw new Error(j.error);
+  return j.data;
+}
+async function post(body) {
+  const r = await fetch('/api/quiz', {
+    method: 'POST',
+    headers: {'Content-Type':'application/json'},
+    body: JSON.stringify(body)
+  });
+  const j = await r.json();
+  if (!j.ok) throw new Error(j.error);
+  return j.data;
+}
+
+// ══ TABS ══
+const PAGES = ['home','manage','prequiz','quiz','result','history','settings'];
+function tab(name) {
+  PAGES.forEach(p => document.getElementById('pg-'+p).style.display = p===name?'':'none');
+  document.querySelectorAll('.nav-tab[data-tab]').forEach(el =>
+    el.classList.toggle('active', el.dataset.tab===name));
+  if (name==='history') loadHist();
+}
+
+// ══ ICONS ══
+const ICONS = {'atmos-natal':'🌅','atmos-colpo':'🔬','bilicare':'👶','biomed':'🏥','brain-monitor':'🧠','cfm-aeeg':'📊','criticool':'❄️','derungs':'💡','hearing-screen':'👂','medix':'💊','mbi':'🖼','phototherapy':'☀️','vacumed':'🩺'};
+
+// ══ HOME ══
+async function loadHome() {
+  const grid = document.getElementById('prodGrid');
+  grid.innerHTML = '<div class="loader"><div class="spin"></div> กำลังโหลด...</div>';
+  try {
+    const [prods, allQ] = await Promise.all([get({action:'getProducts'}), get({action:'getQuestions'})]);
+    S.products = prods;
+    const cnt = {};
+    allQ.forEach(q => { cnt[q.productId] = (cnt[q.productId]||0)+1; });
+    if (!prods.length) { grid.innerHTML='<div class="empty" style="grid-column:1/-1">ยังไม่มีผลิตภัณฑ์</div>'; return; }
+    grid.innerHTML = prods.map(p => `
+      <div class="prod-card" onclick="openProd('${p.id}')">
+        <div class="prod-accent"></div>
+        ${S.isAdmin?`<div class="prod-actions" onclick="event.stopPropagation()">
+          <button class="btn-ic" onclick="showProdForm('${p.id}')">✏️</button>
+          <button class="btn-ic danger" onclick="delProd('${p.id}','${p.name.replace(/'/g,"\\'")}')">🗑</button>
+        </div>`:''}
+        <div class="prod-icon">${ICONS[p.id]||'📦'}</div>
+        <div class="prod-name">${p.name}</div>
+        <div class="prod-desc">${p.description}</div>
+        <div class="prod-count">${cnt[p.id]||0} คำถาม</div>
+      </div>`).join('');
+  } catch(e) {
+    grid.innerHTML = `<div class="empty" style="grid-column:1/-1">⚠️ เชื่อมต่อไม่ได้<br><small>${e.message}</small><br><small>กรุณาตั้งค่า API URL ในแท็บ ⚙️</small></div>`;
+  }
+}
+
+async function openProd(id) {
+  S.cur = S.products.find(p=>p.id===id);
+  if (!S.cur) return;
+  await loadQ(id);
+  document.getElementById('mgLbl').textContent = S.cur.description;
+  document.getElementById('mgTitle').textContent = S.cur.name;
+  tab('manage');
+}
+
+// ══ MANAGE ══
+async function loadQ(pid) {
+  const el = document.getElementById('qList');
+  el.innerHTML = '<div class="loader"><div class="spin"></div></div>';
+  try {
+    S.questions = await get({action:'getQuestions', productId: pid||S.cur.id});
+    renderQ();
+  } catch(e) { el.innerHTML = '<div class="empty">โหลดคำถามไม่สำเร็จ</div>'; }
+}
+
+function renderQ() {
+  const el = document.getElementById('qList');
+  if (!S.questions.length) { el.innerHTML='<div class="empty">ยังไม่มีคำถาม<br><small>กด + คำถาม หรือ Import Word</small></div>'; return; }
+  el.innerHTML = S.questions.map((q,i) => `
+    <div class="q-row">
+      <span class="q-num">${i+1}</span>
+      <span class="q-text">${q.question}</span>
+      <span class="q-ans">${q.answer}</span>
+      ${S.isAdmin?`<div class="q-actions">
+        <button class="btn-ic" onclick="showQForm('${q.id}')">✏️</button>
+        <button class="btn-ic danger" onclick="delQ('${q.id}')">🗑</button>
+      </div>`:''}
+    </div>`).join('');
+}
+
+function showQForm(eid) {
+  const q = eid ? S.questions.find(x=>x.id===eid) : null;
+  document.getElementById('qFormTitle').textContent = q?'แก้ไขคำถาม':'เพิ่มคำถาม';
+  document.getElementById('qId').value  = q?.id||'';
+  document.getElementById('qQ').value   = q?.question||'';
+  document.getElementById('qA').value   = q?.options?.A||'';
+  document.getElementById('qB').value   = q?.options?.B||'';
+  document.getElementById('qC').value   = q?.options?.C||'';
+  document.getElementById('qD').value   = q?.options?.D||'';
+  document.getElementById('qAns').value = q?.answer||'A';
+  document.getElementById('qExp').value = q?.explanation||'';
+  document.getElementById('qOv').style.display='flex';
+}
+function hideQForm() { document.getElementById('qOv').style.display='none'; }
+
+async function submitQ() {
+  const id = document.getElementById('qId').value;
+  const body = { action:'saveQuestion', id:id||undefined, productId:S.cur.id,
+    question:document.getElementById('qQ').value.trim(),
+    options:{A:document.getElementById('qA').value.trim(),B:document.getElementById('qB').value.trim(),
+             C:document.getElementById('qC').value.trim(),D:document.getElementById('qD').value.trim()},
+    answer:document.getElementById('qAns').value,
+    explanation:document.getElementById('qExp').value.trim() };
+  if (!body.question||!body.options.A||!body.options.B||!body.options.C||!body.options.D)
+    return toast('กรุณากรอกให้ครบ','error');
+  try { await post(body); hideQForm(); toast('บันทึกสำเร็จ','success'); await loadQ(); }
+  catch(e) { toast('เกิดข้อผิดพลาด: '+e.message,'error'); }
+}
+
+async function delQ(id) {
+  if (!confirm('ลบคำถามนี้?')) return;
+  try { await post({action:'deleteQuestion',id}); toast('ลบแล้ว','info'); await loadQ(); }
+  catch(e) { toast('ลบไม่ได้','error'); }
+}
+
+// ══ IMPORT WORD ══
+function showImport() {
+  document.getElementById('importOv').style.display='flex';
+  document.getElementById('importPreview').style.display='none';
+  document.getElementById('btnDoImport').style.display='none';
+  document.getElementById('importStatus').textContent='';
+  document.getElementById('importList').innerHTML='';
+  document.getElementById('fileInput').value='';
+  S.importedQs = [];
+}
+function hideImport() { document.getElementById('importOv').style.display='none'; }
+
+function handleDrop(e) {
+  e.preventDefault();
+  document.getElementById('dropZone').classList.remove('drag');
+  const file = e.dataTransfer.files[0];
+  if (file) handleFile(file);
+}
+
+async function handleFile(file) {
+  if (!file) return;
+  document.getElementById('importStatus').textContent = '⏳ กำลังอ่านไฟล์...';
+  document.getElementById('importPreview').style.display='none';
+  document.getElementById('btnDoImport').style.display='none';
+
+  try {
+    const arrayBuffer = await file.arrayBuffer();
+    const result = await mammoth.extractRawText({ arrayBuffer });
+    const text = result.value;
+    const parsed = parseWordQuestions(text);
+
+    if (!parsed.length) {
+      document.getElementById('importStatus').textContent = '❌ ไม่พบคำถามในรูปแบบที่รองรับ';
+      return;
+    }
+
+    S.importedQs = parsed;
+    document.getElementById('importCount').textContent = parsed.length;
+    document.getElementById('importBtnCount').textContent = parsed.length;
+    document.getElementById('importList').innerHTML = parsed.map((q,i) => `
+      <div class="import-q-row">
+        <span class="import-q-num">${i+1}.</span>
+        <strong>${q.question}</strong>
+        <span class="import-q-ans">เฉลย: ${q.answer}</span>
+      </div>`).join('');
+    document.getElementById('importPreview').style.display='block';
+    document.getElementById('btnDoImport').style.display='';
+    document.getElementById('importStatus').textContent = `✅ พบ ${parsed.length} ข้อ — ตรวจสอบแล้วกด Import`;
+  } catch(e) {
+    document.getElementById('importStatus').textContent = '❌ อ่านไฟล์ไม่ได้: ' + e.message;
+  }
+}
+
+function parseWordQuestions(text) {
+  const questions = [];
+  // Split by question number patterns: "1.", "1/", "ข้อที่ 1", etc.
+  const lines = text.split('\n').map(l => l.trim()).filter(l => l);
+  let cur = null;
+
+  for (let i = 0; i < lines.length; i++) {
+    const line = lines[i];
+
+    // Detect question start: starts with number + dot/space
+    const qMatch = line.match(/^(\d+)[./\s)]\s*(.+)/);
+    // Detect options: A. / A) / ก. etc.
+    const optMatch = line.match(/^([A-Dก-ง])[.)]\s*(.+)/i);
+    // Detect answer line: "คำตอบ", "เฉลย", "ตอบ"
+    const ansMatch = line.match(/(?:คำตอบ|เฉลย|ตอบ)[^A-Dก-ง]*([A-Dก-ง])/i);
+    // Detect answer embedded: "คำตอบข้อ N , A"
+    const ansEmbed = line.match(/คำตอบ[^,]*,\s*([A-D])/i);
+
+    if (qMatch && !optMatch) {
+      if (cur && cur.question && Object.keys(cur.options).length === 4) questions.push(finalizeCur(cur));
+      cur = { question: qMatch[2], options: {}, answer: '', explanation: '' };
+    } else if (optMatch && cur) {
+      const key = mapOptKey(optMatch[1]);
+      if (key) cur.options[key] = optMatch[2];
+    } else if ((ansMatch || ansEmbed) && cur) {
+      const raw = (ansEmbed?.[1] || ansMatch?.[1] || '').toUpperCase();
+      cur.answer = mapOptKey(raw) || raw;
+      // next line might be explanation
+      if (lines[i+1] && !lines[i+1].match(/^(\d+)[./\s)]/)) {
+        cur.explanation = lines[i+1]; i++;
+      }
+    } else if (cur && cur.question && Object.keys(cur.options).length === 4 && !cur.answer) {
+      // might be explanation after options
+      cur.explanation = (cur.explanation ? cur.explanation + ' ' : '') + line;
+    }
+  }
+  if (cur && cur.question && Object.keys(cur.options).length >= 2) questions.push(finalizeCur(cur));
+  return questions.filter(q => q.question && q.answer && Object.keys(q.options).length >= 2);
+}
+
+function mapOptKey(k) {
+  const map = {'A':'A','B':'B','C':'C','D':'D','ก':'A','ข':'B','ค':'C','ง':'D'};
+  return map[k?.toUpperCase()] || k?.toUpperCase();
+}
+
+function finalizeCur(cur) {
+  // Fill missing options
+  ['A','B','C','D'].forEach(k => { if (!cur.options[k]) cur.options[k] = '–'; });
+  cur.productId = S.cur?.id || '';
+  return cur;
+}
+
+async function doImport() {
+  if (!S.importedQs.length) return;
+  const replace = document.getElementById('replaceCheck').checked;
+  document.getElementById('btnDoImport').disabled = true;
+  document.getElementById('importStatus').textContent = '⏳ กำลัง import...';
+  try {
+    const result = await post({
+      action: 'importQuestions',
+      productId: S.cur.id,
+      replaceExisting: replace,
+      questions: S.importedQs
+    });
+    toast('✅ ' + result, 'success');
+    hideImport();
+    await loadQ();
+  } catch(e) {
+    toast('Import ไม่สำเร็จ: ' + e.message, 'error');
+    document.getElementById('importStatus').textContent = '❌ ' + e.message;
+  } finally {
+    document.getElementById('btnDoImport').disabled = false;
+  }
+}
+
+// ══ PRODUCT FORM ══
+function showProdForm(eid) {
+  const p = eid ? S.products.find(x=>x.id===eid) : null;
+  document.getElementById('pFormTitle').textContent = p?'แก้ไขผลิตภัณฑ์':'เพิ่มผลิตภัณฑ์';
+  document.getElementById('pId').value   = p?.id||'';
+  document.getElementById('pName').value = p?.name||'';
+  document.getElementById('pDesc').value = p?.description||'';
+  document.getElementById('pOv').style.display='flex';
+}
+function hideProdForm() { document.getElementById('pOv').style.display='none'; }
+
+async function submitProd() {
+  const name = document.getElementById('pName').value.trim();
+  if (!name) return toast('กรุณาใส่ชื่อผลิตภัณฑ์','error');
+  try {
+    await post({action:'saveProduct', id:document.getElementById('pId').value||undefined, name, description:document.getElementById('pDesc').value.trim()});
+    hideProdForm(); toast('บันทึกสำเร็จ','success'); await loadHome();
+  } catch(e) { toast('เกิดข้อผิดพลาด','error'); }
+}
+
+async function delProd(id, name) {
+  if (!confirm(`ลบผลิตภัณฑ์ "${name}"?`)) return;
+  try { await post({action:'deleteProduct',id}); toast('ลบแล้ว','info'); await loadHome(); }
+  catch(e) { toast('ลบไม่ได้','error'); }
+}
+
+// ══ PRE-QUIZ ══
+function startPreQuiz() {
+  if (!S.questions.length) return toast('ยังไม่มีคำถาม','error');
+  document.getElementById('pqProd').textContent  = S.cur.name;
+  document.getElementById('pqDesc').textContent  = S.cur.description;
+  document.getElementById('pqCount').textContent = S.questions.length;
+  document.getElementById('salesName').value = '';
+  tab('prequiz');
+  setTimeout(()=>document.getElementById('salesName').focus(),200);
+}
+
+// ══ QUIZ ══
+function shuffleArr(arr) { return [...arr].sort(()=>Math.random()-.5); }
+
+function startQuiz() {
+  const name = document.getElementById('salesName').value.trim();
+  if (!name) return toast('กรุณาใส่ชื่อ','error');
+  S.quiz = { sales:name, qs:shuffleArr(S.questions), idx:0, ans:[], done:false, cheatCount:0, optMap:{} };
+  document.getElementById('qzProd').textContent  = S.cur.name;
+  document.getElementById('qzSales').textContent = name;
+  tab('quiz'); renderQz();
+}
+
+function renderQz() {
+  const {qs,idx} = S.quiz;
+  const q = qs[idx];
+  document.getElementById('progFill').style.width = Math.round(idx/qs.length*100)+'%';
+  document.getElementById('qzCtr').textContent   = `ข้อ ${idx+1} จาก ${qs.length}`;
+  document.getElementById('qzText').textContent  = q.question;
+  document.getElementById('qzExpl').style.display= 'none';
+  document.getElementById('qzNext').style.display= 'none';
+  S.quiz.done = false;
+
+  // Shuffle options
+  const keys = shuffleArr(['A','B','C','D']);
+  const map  = {};
+  keys.forEach((origK,i) => { map[['A','B','C','D'][i]] = { orig:origK, text:q.options[origK] }; });
+  S.quiz.optMap = map;
+
+  document.getElementById('qzOpts').innerHTML = ['A','B','C','D'].map(dk => `
+    <button class="opt-btn" onclick="ansQ('${dk}')">
+      <span class="opt-k">${dk}</span><span>${map[dk].text}</span>
+    </button>`).join('');
+}
+
+function ansQ(chosen) {
+  if (S.quiz.done) return;
+  S.quiz.done = true;
+  const q   = S.quiz.qs[S.quiz.idx];
+  const map = S.quiz.optMap;
+  const correctDk = Object.keys(map).find(dk => map[dk].orig === q.answer);
+  S.quiz.ans.push({ question:q.question, chosen:map[chosen].orig, correct:q.answer });
+
+  document.querySelectorAll('.opt-btn').forEach((btn,i) => {
+    const dk = ['A','B','C','D'][i];
+    btn.disabled = true;
+    if (dk===correctDk) btn.classList.add('correct');
+    else if (dk===chosen) btn.classList.add('wrong');
+  });
+  if (q.explanation) { const b=document.getElementById('qzExpl'); b.textContent='💡 '+q.explanation; b.style.display='block'; }
+  const nxt = document.getElementById('qzNext');
+  nxt.textContent = S.quiz.idx>=S.quiz.qs.length-1 ? '📊 ดูผลลัพธ์ →' : 'ข้อถัดไป →';
+  nxt.style.display='';
+}
+
+function nextQ() { S.quiz.idx++; S.quiz.idx>=S.quiz.qs.length ? showResult() : renderQz(); }
+function retake() { S.quiz.idx=0;S.quiz.ans=[];S.quiz.qs=shuffleArr(S.quiz.qs);tab('quiz');renderQz(); }
+
+// ══ RESULT ══
+async function showResult() {
+  const {ans,sales} = S.quiz;
+  const score  = ans.filter(a=>a.chosen===a.correct).length;
+  const total  = ans.length;
+  const pct    = Math.round(score/total*100);
+  const passed = pct>=80;
+  document.getElementById('rScore').innerHTML   = `${score}<span style="font-size:32px;opacity:.5">/${total}</span>`;
+  document.getElementById('rVerdict').textContent = passed?'✅ ผ่าน!':'❌ ยังไม่ผ่าน';
+  const fill=document.getElementById('rFill');
+  fill.style.background = passed?'linear-gradient(90deg,#11c98a,#00e6a0)':'linear-gradient(90deg,#f04e4e,#ff7070)';
+  setTimeout(()=>{fill.style.width=pct+'%';},100);
+  const now=new Date().toLocaleDateString('th-TH',{year:'numeric',month:'long',day:'numeric'});
+  document.getElementById('rMeta').textContent = `${sales} · ${S.cur.name} · ${now} · ${pct}%`;
+  let detail = ans.map((a,i)=>`
+    <div class="rdr">
+      <span class="rdr-num">${i+1}</span>
+      <span class="rdr-q">${a.question}<br><small>ตอบ <strong>${a.chosen}</strong> · เฉลย <strong>${a.correct}</strong></small></span>
+      <span class="badge ${a.chosen===a.correct?'badge-ok':'badge-ng'}">${a.chosen===a.correct?'✓ ถูก':'✗ ผิด'}</span>
+    </div>`).join('');
+  if (S.quiz.cheatCount>0) detail += `<div style="margin-top:16px;padding:12px 16px;background:var(--amber-lt);border-left:3px solid var(--amber);border-radius:0 8px 8px 0;font-size:13px;color:#7a5c00">⚠️ มีการออกจากหน้าระหว่างสอบ <strong>${S.quiz.cheatCount} ครั้ง</strong></div>`;
+  document.getElementById('rDetail').innerHTML = detail;
+  tab('result');
+  try {
+    await post({ action:'saveResult', salesName:sales, productId:S.cur.id, productName:S.cur.name,
+      score, total, passed, cheatCount:S.quiz.cheatCount,
+      detail:ans.map(a=>({q:a.question,chosen:a.chosen,correct:a.correct})) });
+  } catch(e) { toast('⚠️ บันทึกผลไม่ได้: '+e.message,'error'); }
+}
+
+// ══ HISTORY ══
+async function loadHist() {
+  const body = document.getElementById('histBody');
+  const fid  = document.getElementById('histFilter').value;
+  body.innerHTML='<div class="loader"><div class="spin"></div></div>';
+  try {
+    const data = await get({action:'getResults', productId:fid});
+    if (!data.length) { body.innerHTML='<div class="empty">ยังไม่มีประวัติ</div>'; return; }
+    body.innerHTML=`<table class="hist-table"><thead><tr>
+      <th>ชื่อพนักงาน</th><th>ผลิตภัณฑ์</th><th>คะแนน</th><th>ผลสอบ</th><th>โกง</th><th>วันที่</th>
+    </tr></thead><tbody>${data.map(r=>`<tr>
+      <td style="font-weight:600">${r.salesName}</td>
+      <td><span class="chip">${r.productName}</span></td>
+      <td style="font-family:var(--mono)">${r.score}/${r.total} <small style="color:var(--txt3)">(${Math.round(r.score/r.total*100)}%)</small></td>
+      <td>${r.passed?'<span class="tag-pass">ผ่าน</span>':'<span class="tag-fail">ไม่ผ่าน</span>'}</td>
+      <td style="font-family:var(--mono);font-size:12px">${r.cheatCount>0?'<span style="color:var(--amber)">⚠️ '+r.cheatCount+'</span>':'–'}</td>
+      <td style="font-size:12px;color:var(--txt3)">${r.timestamp}</td>
+    </tr>`).join('')}</tbody></table>`;
+  } catch(e) { body.innerHTML='<div class="empty">โหลดไม่สำเร็จ<br><small>'+e.message+'</small></div>'; }
+}
+
+function populateHistFilter() {
+  const sel = document.getElementById('histFilter');
+  sel.innerHTML='<option value="">— ทั้งหมด —</option>'+
+    S.products.map(p=>`<option value="${p.id}">${p.name}</option>`).join('');
+}
+
+// ══ SETTINGS ══
+function saveUrl() {
+  const u=document.getElementById('apiInp').value.trim();
+  if(!u) return toast('กรุณาใส่ URL','error');
+  S.apiUrl=u; localStorage.setItem('el_api_url',u);
+  toast('บันทึก URL แล้ว','success');
+  document.getElementById('urlStatus').textContent='✓ บันทึกแล้ว';
+  loadHome();
+}
+async function testConn() {
+  try { const r=await get({action:'ping'}); toast('✅ เชื่อมต่อสำเร็จ: '+r,'success'); document.getElementById('urlStatus').textContent='✓ เชื่อมต่อได้'; }
+  catch(e) { toast('❌ '+e.message,'error'); document.getElementById('urlStatus').textContent='✗ '+e.message; }
+}
+
+// ══ ADMIN ══
+function showPin() { document.getElementById('pinInp').value=''; document.getElementById('pinErr').style.display='none'; document.getElementById('pinOv').style.display='flex'; setTimeout(()=>document.getElementById('pinInp').focus(),100); }
+function hidePin() { document.getElementById('pinOv').style.display='none'; }
+async function checkPin() {
+  const pin=document.getElementById('pinInp').value.trim();
+  try {
+    const r=await post({action:'verifyPin',pin});
+    if(r==='ok'){ S.isAdmin=true; hidePin(); setAdmin(true); toast('เข้าสู่ระบบ Admin ✓','success'); await loadHome(); }
+    else document.getElementById('pinErr').style.display='block';
+  } catch(e) { toast('ตรวจสอบ PIN ไม่ได้','error'); }
+}
+function setAdmin(on) {
+  document.getElementById('btnAddProd').style.display=on?'':'none';
+  document.getElementById('tabManage').classList.toggle('hidden',!on);
+  document.getElementById('hdrRight').innerHTML=on
+    ?`<span class="badge-admin">ADMIN</span> <button class="btn-admin-hdr" onclick="logout()">ออก</button>`
+    :`<button class="btn-admin-hdr" onclick="showPin()">🔐 Admin</button>`;
+}
+function logout() {
+  S.isAdmin=false; setAdmin(false); toast('ออกจากระบบ','info');
+  const cur=PAGES.find(p=>document.getElementById('pg-'+p).style.display!=='none');
+  if(cur==='manage') tab('home');
+  loadHome();
+}
+
+// ══ ANTI-CHEAT ══
+function isQuizActive() { return document.getElementById('pg-quiz').style.display!=='none'; }
+document.addEventListener('visibilitychange',()=>{
+  if(document.hidden && isQuizActive() && !S.quiz.done){
+    S.quiz.cheatCount=(S.quiz.cheatCount||0)+1;
+    document.getElementById('cheatTxt').textContent=`ออกจากหน้าไปแล้ว ${S.quiz.cheatCount} ครั้ง`;
+    document.getElementById('cheatOv').style.display='flex';
+  }
+});
+window.addEventListener('blur',()=>{
+  if(isQuizActive() && !S.quiz.done && !document.hidden){
+    S.quiz.cheatCount=(S.quiz.cheatCount||0)+1;
+    document.getElementById('cheatTxt').textContent=`ออกจากหน้าไปแล้ว ${S.quiz.cheatCount} ครั้ง`;
+    document.getElementById('cheatOv').style.display='flex';
+  }
+});
+
+// ══ TOAST ══
+function toast(msg,type='info'){
+  const el=document.createElement('div');
+  el.className=`toast-item toast-${type}`;el.textContent=msg;
+  document.getElementById('toast').appendChild(el);
+  setTimeout(()=>el.remove(),3500);
+}
+
+// ══ INIT ══
+document.getElementById('apiInp').value='';
+loadHome().then(()=>populateHistFilter());
+</script>
+</body>
+</html>
