@@ -8,32 +8,31 @@ export default async function handler(req, res) {
   if (req.method === 'OPTIONS') return res.status(200).end();
 
   try {
-    let url = GAS_URL;
+    let gasRes;
 
     if (req.method === 'POST') {
-      const payload = encodeURIComponent(JSON.stringify(req.body));
-      url = `${GAS_URL}?payload=${payload}`;
+      // Send as real POST to Apps Script doPost — no URL length limit
+      gasRes = await fetch(GAS_URL, {
+        method: 'POST',
+        redirect: 'follow',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(req.body)
+      });
     } else {
+      // GET — read operations only, payload is small
       const qs = new URLSearchParams(req.query).toString();
-      if (qs) url = `${GAS_URL}?${qs}`;
+      const url = qs ? `${GAS_URL}?${qs}` : GAS_URL;
+      gasRes = await fetch(url, { redirect: 'follow' });
     }
 
-    // Follow redirects manually to handle Apps Script redirect chain
-    const response = await fetch(url, {
-      redirect: 'follow',
-      headers: { 'Accept': 'application/json, text/plain, */*' }
-    });
-
-    const text = await response.text();
-
-    // Try to parse as JSON
+    const text = await gasRes.text();
     try {
-      const data = JSON.parse(text);
-      return res.status(200).json(data);
+      return res.status(200).json(JSON.parse(text));
     } catch {
-      // If not JSON, check if it looks like an error page
-      console.error('Non-JSON response:', text.substring(0, 200));
-      return res.status(200).json({ ok: false, error: 'Apps Script returned non-JSON: ' + text.substring(0, 100) });
+      // Strip HTML tags from error for cleaner message
+      const clean = text.replace(/<[^>]+>/g,'').replace(/\s+/g,' ').trim().substring(0,200);
+      console.error('GAS non-JSON:', clean);
+      return res.status(200).json({ ok: false, error: clean || 'Non-JSON response from Apps Script' });
     }
 
   } catch (err) {
