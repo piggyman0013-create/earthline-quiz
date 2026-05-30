@@ -822,9 +822,13 @@ async function showResult() {
   document.getElementById('rDetail').innerHTML = detail;
   tab('result');
   try {
-    await post({ action:'saveResult', salesName:sales, productId:S.cur.id, productName:S.cur.name,
-      score, total, passed, cheatCount:S.quiz.cheatCount,
-      detail:ans.map(a=>({q:a.question,chosen:a.chosen,correct:a.correct})) });
+    // Trim questions to avoid URL length limits
+    const trimmed = ans.map(a=>({
+      q:a.question.substring(0,50), chosen:a.chosen, correct:a.correct
+    }));
+    await post({ action:'saveResult', salesName:sales, productId:S.cur.id,
+      productName:S.cur.name, score, total, passed,
+      cheatCount:S.quiz.cheatCount, detail:trimmed });
   } catch(e) { toast('⚠️ บันทึกผลไม่ได้: '+e.message,'error'); }
 }
 
