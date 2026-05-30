@@ -1,5 +1,5 @@
 // Vercel Serverless Function — proxy to Google Apps Script
-const GAS_URL = 'https://script.google.com/macros/s/AKfycbwp2Qsbwdi8BooXadJv0iYUNzabPxigRPnm8cFs_DckUc05fxKdFlBU6VQk-zLKT6RR/exec';
+const GAS_URL = 'https://script.google.com/macros/s/AKfycbzuKGVOHEDicm0-afktr0zwMchGc5Yp5RhSmrhvszO616Uke6PnZMASDIKNP0cyS-W8pg/exec';
 
 export default async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
