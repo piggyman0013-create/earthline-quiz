@@ -459,6 +459,8 @@ async function post(body) {
 // ══ TABS ══
 const PAGES = ['home','manage','prequiz','quiz','result','history','settings'];
 function tab(name) {
+  // Block non-admin from manage page
+  if (name === 'manage' && !S.isAdmin) { name = 'home'; }
   PAGES.forEach(p => document.getElementById('pg-'+p).style.display = p===name?'':'none');
   document.querySelectorAll('.nav-tab[data-tab]').forEach(el =>
     el.classList.toggle('active', el.dataset.tab===name));
@@ -499,9 +501,15 @@ async function openProd(id) {
   S.cur = S.products.find(p=>p.id===id);
   if (!S.cur) return;
   await loadQ(id);
-  document.getElementById('mgLbl').textContent = S.cur.description;
-  document.getElementById('mgTitle').textContent = S.cur.name;
-  tab('manage');
+  if (S.isAdmin) {
+    // Admin sees manage page with all questions + answers
+    document.getElementById('mgLbl').textContent = S.cur.description;
+    document.getElementById('mgTitle').textContent = S.cur.name;
+    tab('manage');
+  } else {
+    // Regular user goes straight to pre-quiz (never sees answers)
+    startPreQuiz();
+  }
 }
 
 // ══ MANAGE ══
@@ -516,16 +524,17 @@ async function loadQ(pid) {
 
 function renderQ() {
   const el = document.getElementById('qList');
+  if (!S.isAdmin) { tab('home'); return; } // Guard: non-admin cannot see this page
   if (!S.questions.length) { el.innerHTML='<div class="empty">ยังไม่มีคำถาม<br><small>กด + คำถาม หรือ Import Word</small></div>'; return; }
   el.innerHTML = S.questions.map((q,i) => `
     <div class="q-row">
       <span class="q-num">${i+1}</span>
       <span class="q-text">${q.question}</span>
       <span class="q-ans">${q.answer}</span>
-      ${S.isAdmin?`<div class="q-actions">
+      <div class="q-actions">
         <button class="btn-ic" onclick="showQForm('${q.id}')">✏️</button>
         <button class="btn-ic danger" onclick="delQ('${q.id}')">🗑</button>
-      </div>`:''}
+      </div>
     </div>`).join('');
 }
 
