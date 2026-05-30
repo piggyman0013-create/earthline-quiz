@@ -908,6 +908,14 @@ function toast(msg,type='info'){
 }
 
 // ══ INIT ══
+// Clear ALL admin state on every page load — no one starts as Admin
+S.isAdmin = false;
+localStorage.removeItem('el_admin');
+// Reset UI to non-admin state
+document.getElementById('tabManage').classList.add('hidden');
+document.getElementById('btnAddProd').style.display = 'none';
+document.getElementById('hdrRight').innerHTML = '<button class="btn-admin-hdr" onclick="showPin()">🔐 Admin</button>';
+
 document.getElementById('apiInp').value='';
 loadHome().then(()=>populateHistFilter());
 </script>
